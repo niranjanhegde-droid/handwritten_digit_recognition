@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Handwritten Digit Recognition</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:linear-gradient(135deg,#dfe9f3,#ffffff);
+            padding:20px;
+        }
+
+        .container{
+            width:430px;
+            background:white;
+            border-radius:20px;
+            padding:35px;
+            box-shadow:0px 10px 25px rgba(0,0,0,0.15);
+            text-align:center;
+        }
+
+        h1{
+            color:#222;
+            font-size:38px;
+            margin-bottom:15px;
+            line-height:1.2;
+        }
+
+        .description{
+            color:#666;
+            font-size:15px;
+            margin-bottom:25px;
+        }
+
+        .upload-box{
+            border:2px dashed #007bff;
+            border-radius:15px;
+            padding:30px 20px;
+            cursor:pointer;
+            transition:0.3s;
+            background:#f8fbff;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            overflow:hidden;
+            position:relative;
+        }
+
+        .upload-box:hover{
+            background:#eef5ff;
+        }
+
+        .upload-box h3{
+            color:#007bff;
+            font-size:30px;
+        }
+
+        .upload-box p{
+            color:#666;
+            font-size:14px;
+        }
+
+        input[type="file"]{
+            opacity:0;
+            position:absolute;
+            width:0;
+            height:0;
+        }
+
+        .preview{
+            margin-top:25px;
+        }
+
+        .preview img{
+            width:220px;
+            height:220px;
+            object-fit:contain;
+            border-radius:15px;
+            border:1px solid #ddd;
+            background:#f5f5f5;
+            padding:10px;
+        }
+
+        .button-group{
+            display:flex;
+            gap:15px;
+            margin-top:25px;
+        }
+
+        button{
+            flex:1;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            font-size:16px;
+            font-weight:500;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .predict-btn{
+            background:#007bff;
+            color:white;
+        }
+
+        .predict-btn:hover{
+            background:#0056b3;
+            transform:scale(1.03);
+        }
+
+        .clear-btn{
+            background:#dc3545;
+            color:white;
+        }
+
+        .clear-btn:hover{
+            background:#b02a37;
+            transform:scale(1.03);
+        }
+
+        .result{
+            margin-top:30px;
+            background:#f4f8ff;
+            padding:20px;
+            border-radius:15px;
+        }
+
+        .result h2{
+            color:#333;
+            margin-bottom:10px;
+        }
+
+        .prediction{
+            font-size:65px;
+            font-weight:bold;
+            color:#007bff;
+        }
+
+        .footer-note{
+            margin-top:20px;
+            color:#777;
+            font-size:13px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Handwritten Digit Recognition</h1>
+
+    <p class="description">
+        Upload an image containing only one handwritten digit (0-9)
+    </p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <label class="upload-box">
+
+            <input 
+                type="file" 
+                name="image" 
+                id="imageInput"
+                accept="image/*"
+                required
+            >
+
+            <h3>Choose Image</h3>
+
+            <p>Click here to upload handwritten digit image</p>
+
+        </label>
+
+        <div class="preview" id="previewContainer" style="display:none;">
+
+            <img id="previewImage" src="">
+
+        </div>
+
+        <div class="button-group">
+
+            <button type="submit" class="predict-btn">
+                Predict
+            </button>
+
+            <button type="button" onclick="clearForm()" class="clear-btn">
+                Clear
+            </button>
+
+        </div>
+
+    </form>
+
+    {% if prediction is not None %}
+
+    <div class="result" id="resultBox">
+
+        <h2>Prediction Result</h2>
+
+        <div class="prediction">
+            {{ prediction }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <div class="footer-note">
+        Best accuracy for centered single-digit images.
+    </div>
+
+</div>
+
+<script>
+
+    const imageInput = document.getElementById('imageInput');
+
+    const previewImage = document.getElementById('previewImage');
+
+    const previewContainer = document.getElementById('previewContainer');
+
+    imageInput.addEventListener('change', function(event){
+
+        const file = event.target.files[0];
+
+        if(file){
+
+            previewImage.src = URL.createObjectURL(file);
+
+            previewContainer.style.display = 'block';
+
+        }
+
+    });
+
+    function clearForm(){
+
+        document.getElementById('imageInput').value = "";
+
+        document.getElementById('previewImage').src = "";
+
+        document.getElementById('previewContainer').style.display = "none";
+
+        const resultBox = document.getElementById('resultBox');
+
+        if(resultBox){
+
+            resultBox.style.display = "none";
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
